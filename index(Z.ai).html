@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Warm Home Labor | Matching Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Kanit Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'kanit': ['Kanit', 'sans-serif'],
+                    },
+                    colors: {
+                        'warm-orange': '#ff9800',
+                        'warm-dark': '#37474f',
+                        'warm-light': '#fff8e1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #e0e0e0;
+            perspective: 1500px; /* For 3D rotation */
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #ff9800, #fff3e0, #ffb74d, #ffe0b2);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 3D Page Rotation Logic */
+        .page-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            opacity: 0;
+            visibility: hidden;
+            transform: rotateY(90deg);
+            transform-origin: center center;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            padding-bottom: 100px; /* Space for mobile nav */
+        }
+
+        .page-section.active {
+            opacity: 1;
+            visibility: visible;
+            transform: rotateY(0deg);
+            position: relative;
+        }
+
+        .page-section.exit {
+            transform: rotateY(-90deg);
+            opacity: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ff9800; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-kanit text-warm-dark">
+
+    <div class="animated-bg"></div>
+
+    <!-- DESKTOP NAVIGATION (Top) -->
+    <header class="hidden md:block fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="text-2xl font-bold text-warm-dark">Warm <span class="text-warm-orange">Home</span></div>
+            <nav class="flex gap-2">
+                <button onclick="navigateTo('home')" class="nav-btn active px-5 py-2 rounded-full font-medium transition-all duration-300 hover:bg-warm-orange hover:text-white" data-target="home">Home</button>
+                <button onclick="navigateTo('worker')" class="nav-btn px-5 py-2 rounded-full font-medium transition-all duration-300 hover:bg-warm-orange hover:text-white" data-target="worker">Worker</button>
+                <button onclick="navigateTo('employer')" class="nav-btn px-5 py-2 rounded-full font-medium transition-all duration-300 hover:bg-warm-orange hover:text-white" data-target="employer">Employer</button>
+                <button onclick="navigateTo('features')" class="nav-btn px-5 py-2 rounded-full font-medium transition-all duration-300 hover:bg-warm-orange hover:text-white" data-target="features">System Info</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION (Bottom) -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-50 shadow-lg">
+        <div class="flex justify-around items-center h-16">
+            <button onclick="navigateTo('home')" class="mobile-nav-btn flex flex-col items-center justify-center w-1/4 h-full text-gray-400 transition-colors" data-target="home">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">Home</span>
+            </button>
+            <button onclick="navigateTo('worker')" class="mobile-nav-btn flex flex-col items-center justify-center w-1/4 h-full text-gray-400 transition-colors" data-target="worker">
+                <i class="fas fa-user-tie text-xl"></i>
+                <span class="text-xs mt-1">Worker</span>
+            </button>
+            <button onclick="navigateTo('employer')" class="mobile-nav-btn flex flex-col items-center justify-center w-1/4 h-full text-gray-400 transition-colors" data-target="employer">
+                <i class="fas fa-building text-xl"></i>
+                <span class="text-xs mt-1">Employer</span>
+            </button>
+            <button onclick="navigateTo('features')" class="mobile-nav-btn flex flex-col items-center justify-center w-1/4 h-full text-gray-400 transition-colors" data-target="features">
+                <i class="fas fa-shield-alt text-xl"></i>
+                <span class="text-xs mt-1">Safety</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="pages-wrapper pt-20 md:pt-20">
+
+        <!-- PAGE 1: HOME -->
+        <section id="home" class="page-section active">
+            <div class="flex items-center justify-center min-h-[80vh] px-4">
+                <div class="text-center bg-white/90 backdrop-blur-sm p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                        Find the Right Match for Your Home
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8">
+                        Professional, Verified, and Caring. We connect skilled workers with trusted homes.
+                    </p>
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <button onclick="navigateTo('worker')" class="btn-primary bg-warm-orange text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition active:scale-95">
+                            <i class="fas fa-user-plus mr-2"></i> Apply as Worker
+                        </button>
+                        <button onclick="navigateTo('employer')" class="btn-secondary bg-warm-dark text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transition active:scale-95">
+                            <i class="fas fa-search mr-2"></i> Find Worker
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: WORKER PROFILE SETUP (ฝั่งแรงงาน) -->
+        <section id="worker" class="page-section">
+            <div class="max-w-4xl mx-auto p-4 md:p-8">
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                    <div class="bg-warm-orange p-6 text-white text-center">
+                        <h2 class="text-2xl font-bold">Worker Profile Setup</h2>
+                        <p class="opacity-90">Build your trusted professional profile</p>
+                    </div>
+
+                    <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Left Column -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Skills & Expertise</label>
+                                <select class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50">
+                                    <option>Select Primary Skill</option>
+                                    <option>Cooking & Kitchen</option>
+                                    <option>Elderly Care</option>
+                                    <option>Childcare / Nanny</option>
+                                    <option>General Cleaning</option>
+                                    <option>Gardening</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Experience (Years)</label>
+                                <input type="number" min="0" placeholder="e.g. 5" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Desired Wage Rate (THB/Hour)</label>
+                                <input type="text" placeholder="e.g. 250 THB" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50">
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Identity Verification</label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-warm-orange cursor-pointer transition bg-gray-50">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-warm-orange mb-3"></i>
+                                    <p class="font-medium text-gray-700">Upload ID Card / Documents</p>
+                                    <p class="text-sm text-gray-400 mt-1">JPG or PNG (Max 5MB)</p>
+                                    <input type="file" class="hidden">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">About You</label>
+                                <textarea rows="4" placeholder="Brief introduction about yourself..." class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50 resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 border-t border-gray-100 text-center">
+                        <button class="bg-warm-dark text-white px-10 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-gray-700 transition active:scale-95">
+                            Submit for Verification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: EMPLOYER REQUEST (ฝั่งผู้ว่าจ้าง) -->
+        <section id="employer" class="page-section">
+            <div class="max-w-4xl mx-auto p-4 md:p-8">
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                    <div class="bg-warm-dark p-6 text-white text-center">
+                        <h2 class="text-2xl font-bold">Employer Requirements</h2>
+                        <p class="opacity-90">Help us find the perfect match for your home</p>
+                    </div>
+
+                    <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Left Column -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Type of Work Needed</label>
+                                <select class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50">
+                                    <option>General Housekeeping</option>
+                                    <option>Cooking</option>
+                                    <option>Elderly Assistance</option>
+                                    <option>Deep Cleaning</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">House Size</label>
+                                <div class="flex gap-4">
+                                    <label class="flex-1 text-center p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="radio" name="size" class="hidden">
+                                        <span>Small</span>
+                                    </label>
+                                    <label class="flex-1 text-center p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="radio" name="size" class="hidden">
+                                        <span>Medium</span>
+                                    </label>
+                                    <label class="flex-1 text-center p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="radio" name="size" class="hidden">
+                                        <span>Large</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Pets in Home?</label>
+                                <p class="text-xs text-gray-400 mb-2">Crucial for allergy matching</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="checkbox" class="accent-warm-orange w-5 h-5"> 
+                                        <span><i class="fas fa-dog mr-1"></i> Dogs</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="checkbox" class="accent-warm-orange w-5 h-5"> 
+                                        <span><i class="fas fa-cat mr-1"></i> Cats</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="checkbox" class="accent-warm-orange w-5 h-5"> 
+                                        <span><i class="fas fa-fish mr-1"></i> Fish</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-warm-orange transition has-[:checked]:bg-warm-light has-[:checked]:border-warm-orange">
+                                        <input type="checkbox" class="accent-warm-orange w-5 h-5"> 
+                                        <span><i class="fas fa-paw mr-1"></i> Others</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Location / Coordinates</label>
+                                <div class="relative">
+                                    <input type="text" placeholder="Enter your address" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-warm-orange focus:outline-none transition bg-gray-50 pr-12">
+                                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-warm-orange">
+                                        <i class="fas fa-map-marker-alt text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 border-t border-gray-100 text-center">
+                        <button class="bg-warm-orange text-white px-10 py-4 rounded-full font-semibold text-lg shadow-lg hover:bg-orange-600 transition active:scale-95">
+                            Find Workers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 4: SYSTEM FEATURES (สิ่งที่ระบบช่วยได้) -->
+        <section id="features" class="page-section">
+            <div class="max-w-6xl mx-auto p-4 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-12 text-warm-dark">How Our System Helps You</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Verification Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-lg flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4">
+                            <i class="fas fa-user-check text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-warm-dark">Verification</h3>
+                        <p class="text-gray-600">Workers upload ID and specify skills, creating trust and safety for employers.</p>
+                    </div>
+
+                    <!-- Matching Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-lg flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4">
+                            <i class="fas fa-handshake text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-warm-dark">Smart Matching</h3>
+                        <p class="text-gray-600">Match based on environment. E.g., find workers who love pets for homes with animals.</p>
+                    </div>
+
+                    <!-- Transparency Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-lg flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 mb-4">
+                            <i class="fas fa-dollar-sign text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-warm-dark">Transparency</h3>
+                        <p class="text-gray-600">Upfront wage rates reduce negotiation issues and ensure fair compensation.</p>
+                    </div>
+
+                    <!-- Safety Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-lg flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-4">
+                            <i class="fas fa-shield-alt text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-warm-dark">Safety & Emergency</h3>
+                        <p class="text-gray-600">Address and house data stored securely for emergency response coordination.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Navigation Logic
+        function navigateTo(pageId) {
+            const currentActive = document.querySelector('.page-section.active');
+            const targetPage = document.getElementById(pageId);
+
+            if (currentActive === targetPage) return;
+
+            // Update Nav Buttons (Desktop)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-warm-orange', 'text-white', 'active');
+                if(btn.getAttribute('data-target') === pageId) {
+                    btn.classList.add('bg-warm-orange', 'text-white', 'active');
+                }
+            });
+
+            // Update Mobile Nav
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('text-warm-orange');
+                btn.classList.add('text-gray-400');
+                if(btn.getAttribute('data-target') === pageId) {
+                    btn.classList.remove('text-gray-400');
+                    btn.classList.add('text-warm-orange');
+                }
+            });
+
+            // Page Transition Animation
+            currentActive.classList.add('exit'); // Rotate out
+            currentActive.classList.remove('active');
+
+            setTimeout(() => {
+                currentActive.classList.remove('exit'); // Reset state
+                targetPage.classList.add('active'); // Rotate in
+                window.scrollTo(0, 0); // Scroll to top on mobile
+            }, 400);
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial active states for nav
+            navigateTo('home');
+        });
+    </script>
+</body>
+</html>
